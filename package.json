@@ -1,0 +1,23 @@
+{
+  "name": "se_project_express",
+  "version": "0.1.0",
+  "description": "Project 12",
+  "homepage": "https://github.com/Jellyfish15/se_project_express#readme",
+  "bugs": {
+    "url": "https://github.com/Jellyfish15/se_project_express/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jellyfish15/se_project_express.git"
+  },
+  "license": "ISC",
+  "author": "Gennadiy Strelkov",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
