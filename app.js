@@ -11,6 +11,14 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: "6879c316a2cdf0765d77f683", // Mock user ID for testing
+  };
+  next();
+});
+
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {

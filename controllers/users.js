@@ -23,6 +23,7 @@ const createUser = (req, res) => {
 };
 
 const getUser = (req, res) => {
+  console.log(getUser);
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
@@ -32,7 +33,7 @@ const getUser = (req, res) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: "User not found" });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(404).send({ message: err.message });
     });
 };
 
