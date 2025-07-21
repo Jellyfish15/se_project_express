@@ -5,24 +5,14 @@ const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItems.create({ name, weather, imageURL: imageUrl, owner })
     .then((item) => {
-      const { name, weather, imageURL, _id, owner, likes, createdAt, __v } =
-        item;
-      res.status(201).send({
-        name,
-        weather,
-        imageUrl: imageURL,
-        _id,
-        owner,
-        likes,
-        createdAt,
-        __v,
-      });
+      const { imageURL } = item;
+      res.status(201).send({ ...item.toObject(), imageUrl: imageURL });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -39,13 +29,13 @@ const getItemById = (req, res) => {
       if (!item) {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(200).send(item);
+      return res.status(200).send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -60,7 +50,7 @@ const updateItem = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 const deleteItem = (req, res) => {
@@ -70,13 +60,13 @@ const deleteItem = (req, res) => {
       if (!item) {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(200).send({ message: "Item deleted successfully" });
+      return res.status(200).send({ message: "Item deleted successfully" });
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 const likeClothingItem = (req, res) => {
@@ -90,13 +80,13 @@ const likeClothingItem = (req, res) => {
       if (!item) {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(200).send(item);
+      return res.status(200).send(item);
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 const unlikeClothingItem = (req, res) => {
@@ -110,13 +100,13 @@ const unlikeClothingItem = (req, res) => {
       if (!item) {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.send(item);
+      return res.send(item);
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 module.exports = {
