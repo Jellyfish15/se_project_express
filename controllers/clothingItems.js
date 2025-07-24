@@ -1,7 +1,12 @@
 const ClothingItems = require("../models/clothingItems");
+const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors');
+
+const returnResoponse = (err) => {
+  // iff error is a validation error
+}
 
 const createItem = (req, res) => {
-  const owner = "60d0fe4f5311236168a109ca";
+  const owner = req.user._id;
   const { name, weather, imageUrl } = req.body;
   ClothingItems.create({ name, weather, imageURL: imageUrl, owner })
     .then((item) => {
@@ -35,24 +40,12 @@ const getItemById = (req, res) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
+      // if (err.name  === "CastError") {
+      // return res.status(BAD_REQUEST).send({ message: 'Bad Request' });
       return res.status(500).send({ message: err.message });
     });
 };
 
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageURL } = req.body;
-
-  ClothingItems.findByIdAndUpdate(itemId, { $set: { imageURL } })
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
-      }
-      return res.status(500).send({ message: err.message });
-    });
-};
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   ClothingItems.findByIdAndDelete(itemId)
@@ -113,7 +106,6 @@ module.exports = {
   createItem,
   getItems,
   getItemById,
-  updateItem,
   deleteItem,
   likeClothingItem,
   unlikeClothingItem,

@@ -13,7 +13,7 @@ const {
 router.post("/", createItem);
 router.get("/", getItems);
 router.get("/:itemId", getItemById);
-router.put("/:itemId", updateItem);
+
 router.delete("/:itemId", deleteItem);
 
 // Add like
