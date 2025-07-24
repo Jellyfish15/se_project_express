@@ -4,7 +4,6 @@ const {
   createItem,
   getItems,
   getItemById,
-  updateItem,
   deleteItem,
   likeClothingItem,
   unlikeClothingItem,

@@ -5,9 +5,9 @@ const {
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
 
-const returnResoponse = (err) => {
-  // iff error is a validation error
-};
+// const returnResoponse = (err) => {
+//   // iff error is a validation error
+// };
 
 const createItem = (req, res) => {
   const owner = req.user._id;
