@@ -31,11 +31,11 @@ const clothingItemSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  likes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-    },
-  ],
+  likes: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("ClothingItems", clothingItemSchema);

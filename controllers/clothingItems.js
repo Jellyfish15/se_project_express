@@ -19,7 +19,7 @@ const createItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
@@ -42,11 +42,13 @@ const getItemById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       // if (err.name  === "CastError") {
       // return res.status(BAD_REQUEST).send({ message: 'Bad Request' });
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error occurred on the server" });
     });
 };
 
@@ -60,14 +62,14 @@ const deleteItem = (req, res) => {
       return res.status(200).send({ message: "Item deleted successfully" });
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 const likeClothingItem = (req, res) => {
-  const userId = "60d0fe4f5311236168a109ca"; // or req.user._id if using auth
+  const userId = req.user._id;
   ClothingItems.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: userId } },
@@ -80,14 +82,16 @@ const likeClothingItem = (req, res) => {
       return res.status(200).send(item);
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error occurred on the server" });
     });
 };
 const unlikeClothingItem = (req, res) => {
-  const userId = "60d0fe4f5311236168a109ca"; // or req.user._id if using auth
+  const userId = req.user._id;
   ClothingItems.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: userId } },
@@ -100,10 +104,12 @@ const unlikeClothingItem = (req, res) => {
       return res.send(item);
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error occurred on the server" });
     });
 };
 module.exports = {
