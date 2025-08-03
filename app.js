@@ -1,26 +1,30 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const mainRouter = require("./routes/index");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const clothingItemsRouter = require("./routes/clothingItems");
+const userRouter = require("./routes/users");
+const { login, createUser } = require("./controllers/users");
+const auth = require("./middlewares/auth");
 
 const { PORT = 3001 } = process.env;
-
 const app = express();
-
-mongoose
-  .connect("mongodb://127.0.0.1:27017/wtwr_db")
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
+mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
+app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6879c316a2cdf0765d77f683", // Mock user ID for testing
-  };
-  next();
+app.post("/signin", login);
+app.post("/signup", createUser);
+app.get("/items", require("./controllers/clothingItems").getItems);
+
+app.use(auth);
+app.use("/items", clothingItemsRouter);
+app.use("/users", userRouter);
+
+app.use((req, res) => {
+  res.status(404).send({ message: "Not Found" });
 });
-
-app.use("/", mainRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

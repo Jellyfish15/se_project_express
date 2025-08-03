@@ -14,8 +14,9 @@ const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItems.create({ name, weather, imageURL: imageUrl, owner })
     .then((item) => {
-      const { imageURL } = item;
-      res.status(201).send({ ...item.toObject(), imageUrl: imageURL });
+      console.log("Item created:", item);
+      res.status(201).send(item);
+      
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -53,13 +54,25 @@ const getItemById = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
+  const userId = req.user._id;
   const { itemId } = req.params;
-  ClothingItems.findByIdAndDelete(itemId)
+
+  // First, find the item to check ownership
+  ClothingItems.findById(itemId)
     .then((item) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      return res.status(200).send({ message: "Item deleted successfully" });
+      // Check if the logged-in user is the owner
+      if (item.owner.toString() !== userId) {
+        return res
+          .status(403)
+          .send({ message: "You do not have permission to delete this item" });
+      }
+      // If owner, delete the item
+      return ClothingItems.findByIdAndDelete(itemId).then(() =>
+        res.status(200).send({ message: "Item deleted successfully" })
+      );
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -68,6 +81,7 @@ const deleteItem = (req, res) => {
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
+
 const likeClothingItem = (req, res) => {
   const userId = req.user._id;
   ClothingItems.findByIdAndUpdate(

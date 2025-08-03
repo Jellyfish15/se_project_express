@@ -15,10 +15,8 @@ router.get("/:itemId", getItemById);
 
 router.delete("/:itemId", deleteItem);
 
-// Add like
 router.put("/:itemId/likes", likeClothingItem);
 
-// Remove like
 router.delete("/:itemId/likes", unlikeClothingItem);
 
 module.exports = router;
