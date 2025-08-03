@@ -22,5 +22,6 @@ module.exports = {
   rules: {
     "no-console": ["warn"],
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
+    "consistent-return": "off",
   },
 };

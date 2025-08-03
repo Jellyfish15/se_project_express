@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "The password field is required."],
-   select: false,
+    select: false,
   },
 });
 module.exports = mongoose.model("User", userSchema);
