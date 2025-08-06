@@ -6,8 +6,10 @@ const { JWT_SECRET = "dev-secret" } = process.env;
 
 const {
   BAD_REQUEST,
+  UNAUTHORIZED,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  CONFLICT,
 } = require("../utils/errors");
 
 const getUsers = (req, res) => {
@@ -37,7 +39,7 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        return res.status(409).send({ message: "Email already exists" });
+        return res.status(CONFLICT).send({ message: "Email already exists" });
       }
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
@@ -91,6 +93,7 @@ const updateCurrentUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     return res
       .status(BAD_REQUEST)
@@ -100,12 +103,14 @@ const login = (req, res) => {
     .select("+password")
     .then((user) => {
       if (!user) {
-        return res.status(401).send({ message: "Incorrect email or password" });
+        return res
+          .status(UNAUTHORIZED)
+          .send({ message: "Incorrect email or password" });
       }
       return bcrypt.compare(password, user.password).then((isMatch) => {
         if (!isMatch) {
           return res
-            .status(401)
+            .status(UNAUTHORIZED)
             .send({ message: "Incorrect email or password" });
         }
         const token = jwt.sign({ _id: user._id }, JWT_SECRET, {

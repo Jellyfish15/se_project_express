@@ -3,6 +3,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  FORBIDDEN,
 } = require("../utils/errors");
 
 // const returnResoponse = (err) => {
@@ -12,11 +13,10 @@ const {
 const createItem = (req, res) => {
   const owner = req.user._id;
   const { name, weather, imageUrl } = req.body;
-  ClothingItems.create({ name, weather, imageURL: imageUrl, owner })
+  ClothingItems.create({ name, weather, imageUrl, owner })
     .then((item) => {
       console.log("Item created:", item);
       res.status(201).send(item);
-      
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -66,7 +66,7 @@ const deleteItem = (req, res) => {
       // Check if the logged-in user is the owner
       if (item.owner.toString() !== userId) {
         return res
-          .status(403)
+          .status(FORBIDDEN)
           .send({ message: "You do not have permission to delete this item" });
       }
       // If owner, delete the item
