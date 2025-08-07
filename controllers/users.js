@@ -42,9 +42,9 @@ const createUser = (req, res) => {
         return res.status(CONFLICT).send({ message: "Email already exists" });
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error occurred on the server" });
     });
 };
 
@@ -83,7 +83,7 @@ const updateCurrentUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error occurred on the server" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
@@ -99,31 +99,19 @@ const login = (req, res) => {
       .status(BAD_REQUEST)
       .send({ message: "Email and password are required" });
   }
-  User.findOne({ email })
-    .select("+password")
-    .then((user) => {
-      if (!user) {
-        return res
-          .status(UNAUTHORIZED)
-          .send({ message: "Incorrect email or password" });
-      }
-      return bcrypt.compare(password, user.password).then((isMatch) => {
-        if (!isMatch) {
-          return res
-            .status(UNAUTHORIZED)
-            .send({ message: "Incorrect email or password" });
-        }
-        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-          expiresIn: "7d",
-        });
-        return res.status(200).send({ token });
-      });
-    })
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      }
-      return res
+User.findUserByCredentials(email, password)
+  .then((user) => {
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.status(200).send({ token });
+  })
+  .catch((err) => {
+    if (err.message === "Incorrect email or password") {
+      return res.status(BAD_REQUEST).send({ message: "Invalid email or password" });
+    }
+    return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "An error occurred on the server" });
     });

@@ -6,10 +6,6 @@ const {
   FORBIDDEN,
 } = require("../utils/errors");
 
-// const returnResoponse = (err) => {
-//   // iff error is a validation error
-// };
-
 const createItem = (req, res) => {
   const owner = req.user._id;
   const { name, weather, imageUrl } = req.body;
@@ -22,7 +18,7 @@ const createItem = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error occurred on the server" });
     });
 };
 
@@ -30,28 +26,11 @@ const getItems = (req, res) => {
   ClothingItems.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error occurred on the server" });
+
     });
 };
-const getItemById = (req, res) => {
-  ClothingItems.findById(req.params.itemId)
-    .then((item) => {
-      if (!item) {
-        return res.status(NOT_FOUND).send({ message: "Item not found" });
-      }
-      return res.status(200).send(item);
-    })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-      }
-      // if (err.name  === "CastError") {
-      // return res.status(BAD_REQUEST).send({ message: 'Bad Request' });
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error occurred on the server" });
-    });
-};
+
 
 const deleteItem = (req, res) => {
   const userId = req.user._id;
@@ -78,7 +57,8 @@ const deleteItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error occurred on the server" });
+
     });
 };
 
