@@ -10,13 +10,16 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
+  const { email, password, name, avatar } = req.body;
+  User.create({ email, password, name, avatar })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
+      }
+      if (err.code === 11000) {
+        return res.status(409).send({ message: "Email already exists" });
       }
       return res.status(500).send({ message: err.message });
     });
