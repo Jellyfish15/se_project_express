@@ -44,6 +44,8 @@ const getUser = (req, res) => {
 
 const createUser = (req, res) => {
   const { email, password, name, avatar } = req.body;
+  console.log("Creating user with email:", email);
+  console.log("Creating user with password:", password);
   if (!email || !password) {
     return res
       .status(BAD_REQUEST)
@@ -52,7 +54,19 @@ const createUser = (req, res) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => {
-      return User.create({ email, password: hash, name, avatar });
+      console.log("Creating user with hashed password:", hash);
+      console.log(
+        email,
+        hash,
+        name,
+        avatar
+      );
+      return User.create({
+        email,
+        password: hash,
+        name,
+        avatar,
+      });
     })
     .then((user) => {
       const userObj = user.toObject();
@@ -60,7 +74,9 @@ const createUser = (req, res) => {
       res.status(201).send(userObj);
     })
     .catch((err) => {
+      console.log(err);
       if (err.code === 11000) {
+
         return res.status(CONFLICT).send({ message: "Email already exists" });
       }
       if (err.name === "ValidationError") {
@@ -88,6 +104,7 @@ const getCurrentUser = (req, res) => {
         .json({ message: "An error occurred on the server" });
     });
 };
+
 const updateCurrentUser = (req, res) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
@@ -117,7 +134,7 @@ const updateCurrentUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-
+  console.log("Email", email, "password", password);
   if (!email || !password) {
     return res
       .status(BAD_REQUEST)
@@ -125,10 +142,11 @@ const login = (req, res) => {
   }
   User.findUserByCredentials(email, password)
     .then((user) => {
+      console.log("user", user);
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-
+      console.log("Generated token:", token);
       return res.status(200).send({ token });
     })
     .catch((err) => {
