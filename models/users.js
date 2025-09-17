@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: "",
+    required: true,
   },
   avatar: {
     type: String,
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
       },
       message: "You must enter a valid URL",
     },
-    default: "",
+    required: true,
   },
 });
 userSchema.statics.findUserByCredentials = async function (email, password) {
@@ -52,7 +52,7 @@ userSchema.statics.findUserByCredentials = async function (email, password) {
     throw new Error("Incorrect email or password");
   }
 
-  //console.log("returning user", user);
+  // console.log("returning user", user);
   return user;
 };
 module.exports = mongoose.model("User", userSchema);

@@ -1,7 +1,23 @@
-// middleware/validation.js
-
 const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
+
+const validateURL = (value, helpers) => {
+  if (!validator.isURL(value)) {
+    return helpers.error("string.uri");
+  }
+  return value;
+};
+
+// Validation for updating user (name and avatar)
+const validateUserUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).required(),
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.empty": 'The "avatar" field must be filled in',
+      "string.uri": 'The "avatar" field must be a valid url',
+    }),
+  }),
+});
 
 const validateUser = celebrate({
   body: Joi.object().keys({
@@ -12,22 +28,14 @@ const validateUser = celebrate({
   }),
 });
 
-// Custom Joi validation for URLs using validator.isURL
-const validateURL = (value, helpers) => {
-  if (!validator.isURL(value)) {
-    return helpers.error("string.uri");
-  }
-  return value;
-};
-
 // Clothing item creation validation middleware
 const validateClothingItem = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
     imageUrl: Joi.string().required().custom(validateURL).messages({
-  'string.empty': 'The "imageUrl" field must be filled in',
-  'string.uri': 'the "imageUrl" field must be a valid url',
-}),
+      "string.empty": 'The "imageUrl" field must be filled in',
+      "string.uri": 'the "imageUrl" field must be a valid url',
+    }),
     weather: Joi.string().required(), // assuming weather is required
   }),
 });
@@ -56,4 +64,5 @@ module.exports = {
   loginAuthentication,
   validateURL,
   validateId,
+  validateUserUpdate,
 };

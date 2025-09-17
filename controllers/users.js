@@ -1,43 +1,14 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/users");
-const auth = require("../middlewares/auth");
 
 const { JWT_SECRET = "dev-secret" } = process.env;
 
 const {
   BadRequestError,
-  UnauthorizedError,
-  ForbiddenError,
   NotFoundError,
   ConflictError,
 } = require("../utils/customErrors");
-
-const getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      next(err);
-    });
-};
-const getUser = (req, res, next) => {
-  const userId = req.params.userId;
-  User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError("User not found"));
-      }
-      return res.status(200).send(user);
-    })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        return next(
-          new BadRequestError("The id string is in an invalid format")
-        );
-      }
-      next(err);
-    });
-};
 
 const createUser = (req, res, next) => {
   const { email, password, name, avatar } = req.body;
@@ -46,14 +17,14 @@ const createUser = (req, res, next) => {
   }
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
-      return User.create({
+    .then((hash) =>
+      User.create({
         email,
         password: hash,
         name,
         avatar,
-      });
-    })
+      })
+    )
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
@@ -133,8 +104,6 @@ const login = (req, res, next) => {
 };
 
 module.exports = {
-  getUsers,
-  getUser,
   createUser,
   getCurrentUser,
   login,

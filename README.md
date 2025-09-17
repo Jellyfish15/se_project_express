@@ -9,4 +9,8 @@ Backend functions of the What to Wear app. Created routes, models, and controlle
 
 ### Testing
 
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+Domain Names: wtwrgs.ignorelist.com, www.wtwrgs.ignorelist.com, api.wtwrgs.ignorelist.com
+
+Frontend Github Repo: https://github.com/Jellyfish15/se_project_react.git
+
+Backend Github Repo: https://github.com/Jellyfish15/se_project_react.git

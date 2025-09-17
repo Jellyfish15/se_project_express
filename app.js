@@ -3,14 +3,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-const clothingItemsRouter = require("./routes/clothingItems");
-const userRouter = require("./routes/users");
-const { login, createUser } = require("./controllers/users");
-const auth = require("./middlewares/auth");
-const { NOT_FOUND } = require("./utils/errors");
+const { errors } = require("celebrate");
 const mainRouter = require("./routes/index");
 const errorHandler = require("./utils/errorHandler");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const { PORT = 3001 } = process.env;

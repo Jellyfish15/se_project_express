@@ -4,21 +4,26 @@ const router = express.Router();
 
 const clothingItemsRouter = require("./clothingItems");
 const userRouter = require("./users");
-const { NOT_FOUND } = require("../utils/errors");
 
 const { login, createUser } = require("../controllers/users");
+const {
+  validateUser,
+  loginAuthentication,
+} = require("../middlewares/validation");
 const auth = require("../middlewares/auth");
 const { getItems } = require("../controllers/clothingItems");
 
 router.use("/items", clothingItemsRouter);
 router.use("/users", userRouter);
 
-router.post("/signin", login);
-router.post("/signup", createUser);
+router.post("/signin", loginAuthentication, login);
+router.post("/signup", validateUser, createUser);
 router.get("/items", getItems);
 
-router.use((req, res) => {
-  res.status(404).send({ message: "Not Found" });
+const { NotFoundError } = require("../utils/customErrors");
+
+router.use((req, res, next) => {
+  next(new NotFoundError("Not Found"));
 });
 
 router.use(auth);
